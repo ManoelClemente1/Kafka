@@ -2,19 +2,26 @@
 
 ## Comandos básicos
 
-zookeeper-server-start.bat ../../config/zookeeper.properties
-kafka-server-start.bat ../../config/server.properties
+#### Subir zookeper
+* zookeeper-server-start.bat ../../config/zookeeper.properties
 
-kafka-server-start.bat ../../config/server.properties
+#### Subir Kafka
+* kafka-server-start.bat ../../config/server.properties
 
-kafka-topics.bat --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic LOJA_NOVOPEDIDO
+#### Criar um topic
+* kafka-topics.bat --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic LOJA_NOVOPEDIDO
 
-kafka-topics.bat --list --bootstrap-server localhost:9092
+#### Listar topicos
+* kafka-topics.bat --list --bootstrap-server localhost:9092
 
-kafka-console-producer.bat --broker-list localhost:9092 --topic LOJA_NOVOPEDIDO
+#### Detalhes topicos
+* kafka-topics.bat --bootstrap-server localhost:9092 --describe
 
-kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic ECOMMERCE_NEW_ORDER --from-beginning
+#### Ativar listener
+* kafka-console-producer.bat --broker-list localhost:9092 --topic LOJA_NOVOPEDIDO
 
-kafka-topics.bat --bootstrap-server localhost:9092 --describe
+#### Ativar producer
+* kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic ECOMMERCE_NEW_ORDER --from-beginning
 
-kafka-topics.bat --alter --zookeeper localhost:2181 --topic ECOMMERCE_NEW_ORDER --partitions 3
+#### Alterar topico para 3 particoes
+* kafka-topics.bat --alter --zookeeper localhost:2181 --topic ECOMMERCE_NEW_ORDER --partitions 3
