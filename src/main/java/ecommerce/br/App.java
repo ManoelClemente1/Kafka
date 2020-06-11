@@ -1,5 +1,6 @@
 package ecommerce.br;
 
+import java.math.BigDecimal;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -16,27 +17,20 @@ import org.apache.kafka.common.serialization.StringSerializer;
  */
 public class App {
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
-		var producer = new KafkaProducer<String, String>(properties());
-		var key = UUID.randomUUID().toString();
-		var value = "133333,1231,88888888128";
-		var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER", key, value);		
-		Callback callback = (data,ex) -> {
-			if(ex != null) {
-				ex.printStackTrace();
-			}
-			System.out.println("sucesso enviando " + data.topic() + ":::partition" + data.partition() + "/offset" + data.offset() + "/timestamp" + data.timestamp());
-		};
-		var email = "Bem vindo ao processo do seu pedido";
-		var emailRecord = new ProducerRecord<>("ECOMMERCE_SEND_EMAIL", key,email);
-		producer.send(record,callback).get();
-		producer.send(emailRecord, callback).get();
+		var orderDispatcher = new KafkaDispatcher<Order>();
+		var emailDispatcher = new KafkaDispatcher<String>();
+
+		for (var i = 0; i < 10; i++) {
+			var userId = UUID.randomUUID().toString();
+			var orderId = UUID.randomUUID().toString();
+			var amount = new BigDecimal(Math.random() * 5000 + 1);
+			var order = new Order(userId, orderId,amount);
+			
+			orderDispatcher.send("ECOMMERCE_NEW_ORDER", userId, order);
+
+			var email = "Bem vindo ao processo do seu pedido";
+			emailDispatcher.send("ECOMMERCE_SEND_EMAIL", userId, email);
+		}
 	}
-	
-	private static Properties properties() {
-		var properties = new Properties();
-		properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-		properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-		properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-		return properties;
-	}
+
 }
